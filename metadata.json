@@ -1,0 +1,5 @@
+{
+  "name": "Flight Delay Predictor",
+  "description": "A web application that predicts the likelihood of a flight delay using a simulated model powered by the Gemini API, based on provided flight details and historical data patterns.",
+  "requestFramePermissions": []
+}
