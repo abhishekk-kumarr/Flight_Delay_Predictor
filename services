@@ -1,0 +1,37 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FlightData, PredictionResultData } from "../types";
+
+const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
+
+export async function predictFlightDelay(
+  flightData: FlightData
+): Promise<PredictionResultData> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    const prompt = `
+      Based on the following flight details, predict whether the flight will be delayed.
+      Provide a short description and a delay probability.
+
+      Flight Details:
+      Airline: ${flightData.airline}
+      Origin: ${flightData.origin}
+      Destination: ${flightData.destination}
+      Departure Time: ${flightData.departureTime}
+
+      Respond in JSON format:
+      {
+        "delayProbability": "number between 0 and 100",
+        "description": "short explanation"
+      }
+    `;
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+
+    return JSON.parse(text);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Prediction failed");
+  }
+}
